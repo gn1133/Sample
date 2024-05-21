@@ -17,7 +17,7 @@ jobs:
             Body = @{
               Usernameofbreez = 'samir.soudagar@tesquirel.com'
               Passwordofbreez = 'tsq@123'
-              BatchscheduleID = $env:BATCHSCHEDULEID
+              BatchscheduleID = ${{ secrets.BATCHSCHEDULEID }}
               IpAddress = 'http://3.6.189.154:8080/'
             }
           }
