@@ -15,9 +15,9 @@ jobs:
             Uri = 'http://3.6.189.154:8080/invokeFromPipeline'
             Method = 'POST'
             Body = @{
-              Usernameofbreez = 'samir.soudagar@tesquirel.com'
-              Passwordofbreez = 'tsq@123'
-              BatchscheduleID = $env:BSCode
+              Usernameofbreez = 'sopanna.musalappa@tesquirel.com'
+              Passwordofbreez = 'Arun@123'
+              BatchscheduleID = BS01389
               IpAddress = 'http://3.6.189.154:8080/'
             }
           }
