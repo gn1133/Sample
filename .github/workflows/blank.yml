@@ -17,7 +17,7 @@ jobs:
             Body = @{
               Usernameofbreez = 'sopanna.musalappa@tesquirel.com'
               Passwordofbreez = 'Arun@123'
-              BatchscheduleID = 'BS01389'
+              BatchscheduleID = ${BATCHSCHEDULEID}
               IpAddress = 'http://3.6.189.154:8080/'
             }
           }
