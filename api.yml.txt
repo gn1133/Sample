@@ -8,7 +8,7 @@ on:
 jobs:
   invoke_api:
     runs-on: windows-latest
-    steps:
+    steps:test
       - name: Call REST API
         run: |
           $params = @{
