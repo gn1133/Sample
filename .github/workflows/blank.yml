@@ -20,7 +20,7 @@ jobs:
         uses: docker://curlimages/curl:latest
         with:
           args: >
-            -X POST "http://192.168.0.108:8083/test-automation-via-cicd"
+            -X POST "https://sertfy.tqdemo.in/api/test-automation-via-cicd"
             -F "Usernameofbreez=satyam.rai@tesquirel.com"
             -F "Passwordofbreez=tsq@1203"
             -F "BatchscheduleID=BS00147"
