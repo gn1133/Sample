@@ -1,25 +1,27 @@
-name: GitHub Actions Pipelinee
+name: Upload APK to Breez API
 
 on:
+  workflow_dispatch: # Manual trigger
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  invoke_api:
-    runs-on: windows-latest
+  upload-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20 # Extra time for large file
+
     steps:
-      - name: Call REST API
+      - name: Download APK from Release
         run: |
-         $BatchscheduleID = '${{ vars.BATCHSCHEDULEID }}'
-          $params = @{
-            Uri = 'http://3.6.189.154:8080/invokeFromPipeline'
-            Method = 'POST'
-            Body = @{
-              Usernameofbreez = 'sopanna.musalappa@tesquirel.com'
-              Passwordofbreez = 'Arun@123'
-              BatchscheduleID = $BatchscheduleI
-              IpAddress = 'http://3.6.189.154:8080/'
-            }
-          }
-          Invoke-RestMethod @params
+          curl -LO "https://github.com/gnt133/Sample/releases/download/v1.0.0/uat-30-July.apk"
+          ls -lh # Verify file size (~291MB)
+
+      - name: Upload to Breez API
+        uses: docker://curlimages/curl:latest
+        with:
+          args: >
+            -X POST "http://192.168.0.108:8083/test-automation-via-cicd"
+            -F "Usernameofbreez=satyam.rai@tesquirel.com"
+            -F "Passwordofbreez=tsq@1203"
+            -F "BatchscheduleID=BS00147"
+            -F "File=@./uat-30-July.apk"
