@@ -23,5 +23,5 @@ jobs:
             -X POST "https://sertfy.tqdemo.in/api/test-automation-via-cicd"
             -F "Usernameofbreez=satyam.rai@tesquirel.com"
             -F "Passwordofbreez=tsq@123"
-            -F "BatchscheduleID=BS00147"
+            -F "BatchscheduleID=BS00146"
             -F "File=@./uat-30-July.apk"
