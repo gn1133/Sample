@@ -24,15 +24,15 @@ jobs:
           echo "📁 Downloaded files:"
           ls -lh
           echo "ℹ️ File info:"
-          file Build.apk || echo "❌ File command failed"
-          stat Build.apk || echo "❌ Stat command failed"
+          file build.apk || echo "❌ File command failed"
+          stat build.apk || echo "❌ Stat command failed"
 
       - name: Verify APK file
         run: |
-          if [ ! -f "Build.apk" ]; then
+          if [ ! -f "build.apk" ]; then
             echo "❌ Error: APK file not found!"
             exit 1
-          elif [ $(stat -c%s "Build.apk") -lt 1000000 ]; then
+          elif [ $(stat -c%s "build.apk") -lt 1000000 ]; then
             echo "❌ Error: APK file too small (likely failed download)"
             exit 1
           else
@@ -54,7 +54,7 @@ jobs:
             -F "Usernameofbreez=satyam.rai@tesquirel.com" \
             -F "Passwordofbreez=tsq@123" \
             -F "BatchscheduleID=BS00147" \
-            -F "File=@./Build.apk" \
+            -F "File=@./build.apk" \
             > upload-response.log 2> upload-debug.log
           
           echo "🔄 Upload complete. Status code: $?"
