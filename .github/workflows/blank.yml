@@ -17,7 +17,7 @@ jobs:
       - name: Download APK from Release
         run: |
           echo "⬇️ Starting APK download..."
-          curl -v -LO "https://github.com/gn1133/Sample/releases/tag/v1.0.0/Build.apk" 2> curl-download.log
+          curl -v -LO "https://github.com/gn1133/Sample/releases/download/v1.0.0/build.apk" 2> curl-download.log
           
           echo "🔍 Download Debug:"
           cat curl-download.log
