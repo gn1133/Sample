@@ -8,42 +8,68 @@ on:
 jobs:
   upload-apk:
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # Extra time for large file
+    timeout-minutes: 20
 
     steps:
-      - name: Checkout repository (for debugging)
+      - name: Checkout repository
         uses: actions/checkout@v4
       
       - name: Download APK from Release
         run: |
-          echo "Starting APK download..."
-          curl -v -LO "https://github.com/api133/buildapk/releases/download/v1.0.0/Build.apk" 2> curl-debug.log
-          echo "Curl debug output:"
-          cat curl-debug.log
-          echo "Downloaded files:"
+          echo "⬇️ Starting APK download..."
+          curl -v -LO "https://github.com/api133/buildapk/releases/download/v1.0.0/Build.apk" 2> curl-download.log
+          
+          echo "🔍 Download Debug:"
+          cat curl-download.log
+          echo "📁 Downloaded files:"
           ls -lh
-          echo "File info:"
-          file Build.apk || echo "File command failed"
-          stat Build.apk || echo "Stat command failed"
-          echo "Download complete"
+          echo "ℹ️ File info:"
+          file Build.apk || echo "❌ File command failed"
+          stat Build.apk || echo "❌ Stat command failed"
 
-      - name: Upload to Breez API
-        id: upload
-        uses: docker://curlimages/curl:latest
-        with:
-          args: >
-            -v
-            -X POST "https://sertfy.tqdemo.in/api/test-automation-via-cicd"
-            -H "Content-Type: multipart/form-data"
-            -F "Usernameofbreez=satyam.rai@tesquirel.com"
-            -F "Passwordofbreez=tsq@123"
-            -F "BatchscheduleID=BS00147"
-            -F "File=@./Build.apk"
-            2> upload-debug.log
-        continue-on-error: true
-
-      - name: Display upload debug logs
+      - name: Verify APK file
         run: |
-          echo "Upload debug output:"
-          cat upload-debug.log || echo "No debug log file found"
-          echo "Upload step status: ${{ steps.upload.outcome }}"
+          if [ ! -f "Build.apk" ]; then
+            echo "❌ Error: APK file not found!"
+            exit 1
+          elif [ $(stat -c%s "Build.apk") -lt 1000000 ]; then
+            echo "❌ Error: APK file too small (likely failed download)"
+            exit 1
+          else
+            echo "✅ APK file verified"
+          fi
+
+      - name: Upload to Breez API (LambdaTest compatible)
+        id: upload
+        run: |
+          echo "⬆️ Starting API upload..."
+          
+          # Using native curl instead of docker for better LambdaTest compatibility
+          curl -vvv \
+            -X POST "https://sertfy.tqdemo.in/api/test-automation-via-cicd" \
+            -H "User-Agent: GitHub-Actions" \
+            -H "Accept: */*" \
+            -H "Cache-Control: no-cache" \
+            -H "Connection: keep-alive" \
+            -F "Usernameofbreez=satyam.rai@tesquirel.com" \
+            -F "Passwordofbreez=tsq@123" \
+            -F "BatchscheduleID=BS00147" \
+            -F "File=@./Build.apk" \
+            > upload-response.log 2> upload-debug.log
+          
+          echo "🔄 Upload complete. Status code: $?"
+          echo "🔍 Response body:"
+          cat upload-response.log || echo "No response body"
+          echo "📝 Debug logs:"
+          cat upload-debug.log || echo "No debug logs"
+
+      - name: Validate API response
+        run: |
+          if grep -q "success" upload-response.log; then
+            echo "✅ API returned success response"
+          else
+            echo "❌ API response indicates failure"
+            echo "Full response:"
+            cat upload-response.log
+            exit 1
+          fi
