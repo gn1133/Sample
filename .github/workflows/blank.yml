@@ -11,17 +11,39 @@ jobs:
     timeout-minutes: 20 # Extra time for large file
 
     steps:
+      - name: Checkout repository (for debugging)
+        uses: actions/checkout@v4
+      
       - name: Download APK from Release
         run: |
-          curl -LO "https://github.com/gnt133/Sample/releases/download/v1.0.0/uat-30-July.apk"
-          ls -lh # Verify file size (~291MB)
+          echo "Starting APK download..."
+          curl -v -LO "https://github.com/api133/buildapk/releases/download/v1.0.0/Build.apk" 2> curl-debug.log
+          echo "Curl debug output:"
+          cat curl-debug.log
+          echo "Downloaded files:"
+          ls -lh
+          echo "File info:"
+          file Build.apk || echo "File command failed"
+          stat Build.apk || echo "Stat command failed"
+          echo "Download complete"
 
       - name: Upload to Breez API
+        id: upload
         uses: docker://curlimages/curl:latest
         with:
           args: >
+            -v
             -X POST "https://sertfy.tqdemo.in/api/test-automation-via-cicd"
+            -H "Content-Type: multipart/form-data"
             -F "Usernameofbreez=satyam.rai@tesquirel.com"
             -F "Passwordofbreez=tsq@123"
             -F "BatchscheduleID=BS00147"
-            -F "File=@./uat-30-July.apk"
+            -F "File=@./Build.apk"
+            2> upload-debug.log
+        continue-on-error: true
+
+      - name: Display upload debug logs
+        run: |
+          echo "Upload debug output:"
+          cat upload-debug.log || echo "No debug log file found"
+          echo "Upload step status: ${{ steps.upload.outcome }}"
