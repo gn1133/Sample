@@ -53,7 +53,7 @@ jobs:
             -H "Connection: keep-alive" \
             -F "Usernameofbreez=satyam.rai@tesquirel.com" \
             -F "Passwordofbreez=tsq@123" \
-            -F "BatchscheduleID=BS00147" \
+            -F "BatchscheduleID=BS00149" \
             -F "File=@./build.apk" \
             > upload-response.log 2> upload-debug.log
           
